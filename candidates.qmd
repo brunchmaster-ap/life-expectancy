@@ -9,6 +9,74 @@ execute:
 #| message: false
 library(tidyverse)
 library(primer.data)
+library(tidymodels)
+library(broom)
+library(marginaleffects)
 ```
 
-Lifespan varies widely among individuals and can be influenced by many factors, including demographic characteristics. This study uses data from over 3,500 U.S. gubernatorial election candidates collected by the primer.data package to explore how long candidates live after their elections.
+Lifespan varies widely among individuals and can be influenced by many factors, including demographic characteristics. This study uses data from over 3,500 U.S. gubernatorial election candidates collected by the primer.data package to explore how long candidates live after their elections. A potential weakness of our model is that unmeasured factors, such as lifestyle or health conditions, may bias the estimated relationship between running for office and longevity. We model candidate longevity, measured in years lived after an election, as a linear function of their age at election and other covariates. One key finding is that for male candidates, each additional year of age at election is associated with living about 0.8 years less after the election compared to females, with a 95% confidence interval from about –1.5 to –0.07 years.
+
+$$
+Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \cdots + \beta_n X_n + \epsilon
+$$
+with 
+$$
+\epsilon \sim \mathcal{N}(0, \sigma^2)
+$$
+
+$$
+\widehat{\text{att\_end}} = 8.45 + 1.55 \cdot \text{treatment}_{\text{Treated}}
+$$
+
+```{r}
+#| cache: true
+```
+
+```{r}
+library(nnet)
+
+# Create a small example dataset
+example_data <- data.frame(
+  pres_vote = factor(c("Clinton", "Bush", "Clinton", "Perot", "Bush")),
+  sex = factor(c("Male", "Female", "Female", "Male", "Female"))
+)
+
+# Fit the multinomial regression model
+fit_example <- multinom(pres_vote ~ sex, data = example_data, trace = FALSE)
+
+# Show summary of the model
+summary(fit_example)
+```
+
+```{r}
+# Load the necessary library
+library(ggplot2)
+
+# Create the plot using the 'governors' dataframe
+ggplot(governors, aes(x = election_age, y = lived_after, color = sex)) +
+  # Corrected line: alpha = 0.2 is now inside geom_smooth()
+  geom_smooth(method = "lm", se = TRUE, aes(fill = sex), alpha = 0.2) +
+  labs(
+    title = "Projected Post-Election Lifespan of US Governors by Election Age and Sex",
+    subtitle = "While female governors show a relatively stable expected post-election lifespan regardless of age, male governors tend to have shorter expected lifespans with increasing election age.",
+    caption = "Data source: Compiled from public records of US gubernatorial elections and vital statistics.", # IMPORTANT: Refine this data source to be as specific as possible if you know it!
+    x = "Election Age (Years)",
+    y = "Expected Years Lived After Election"
+  ) +
+  scale_color_manual(values = c("Female" = "#E41A1C", "Male" = "#377EB8")) + # Nicer distinct colors (e.g., from brewer.pal)
+  scale_fill_manual(values = c("Female" = "#E41A1C", "Male" = "#377EB8")) + # Removed alpha here
+  theme_minimal() + # Start with a clean theme
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 16), # Center, bold, larger title
+    plot.subtitle = element_text(hjust = 0.5, size = 11, color = "gray30"), # Center, slightly smaller, muted subtitle
+    plot.caption = element_text(hjust = 1, size = 9, color = "gray50"), # Right-align, smaller, muted caption
+    axis.title = element_text(face = "bold", size = 12), # Bold axis titles
+    axis.text = element_text(size = 10), # Adjust axis text size
+    legend.position = "right", # Place legend on the right
+    legend.title = element_text(face = "bold"), # Bold legend title
+    panel.grid.major = element_line(color = "gray90", linetype = "dotted"), # Lighter, dotted major grid lines
+    panel.grid.minor = element_blank() # Remove minor grid lines for less clutter
+  ) +
+  # Optional: Add specific breaks for election_age if desired
+  scale_x_continuous(breaks = seq(40, 90, by = 10))
+```

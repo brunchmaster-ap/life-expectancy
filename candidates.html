@@ -35,6 +35,35 @@ ul.task-list li input[type="checkbox"] {
 <link href="candidates_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="candidates_files/libs/bootstrap/bootstrap-bb462d781dde1847d9e3ccf7736099dd.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -63,7 +92,50 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Lifespan varies widely among individuals and can be influenced by many factors, including demographic characteristics. This study uses data from over 3,500 U.S. gubernatorial election candidates collected by the primer.data package to explore how long candidates live after their elections.</p>
+<p>Lifespan varies widely among individuals and can be influenced by many factors, including demographic characteristics. This study uses data from over 3,500 U.S. gubernatorial election candidates collected by the primer.data package to explore how long candidates live after their elections. A potential weakness of our model is that unmeasured factors, such as lifestyle or health conditions, may bias the estimated relationship between running for office and longevity. We model candidate longevity, measured in years lived after an election, as a linear function of their age at election and other covariates. One key finding is that for male candidates, each additional year of age at election is associated with living about 0.8 years less after the election compared to females, with a 95% confidence interval from about –1.5 to –0.07 years.</p>
+<p><span class="math display">\[
+Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \cdots + \beta_n X_n + \epsilon
+\]</span> with <span class="math display">\[
+\epsilon \sim \mathcal{N}(0, \sigma^2)
+\]</span></p>
+<p><span class="math display">\[
+\widehat{\text{att\_end}} = 8.45 + 1.55 \cdot \text{treatment}_{\text{Treated}}
+\]</span></p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Call:
+multinom(formula = pres_vote ~ sex, data = example_data, trace = FALSE)
+
+Coefficients:
+        (Intercept)   sexMale
+Clinton  -0.6974369  9.142506
+Perot    -9.1277013 17.572839
+
+Std. Errors:
+        (Intercept)  sexMale
+Clinton    1.225668 68.22932
+Perot     67.806204 96.18430
+
+Residual Deviance: 6.592551 
+AIC: 14.59255 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 7 rows containing non-finite outside the scale range
+(`stat_smooth()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="candidates_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 
 </main>
 <!-- /main column -->
