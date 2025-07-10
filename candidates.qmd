@@ -1,0 +1,14 @@
+---
+title: "Life Expectancy for Political Candidates"
+format: html
+execute: 
+  echo: false
+---
+
+```{r}
+#| message: false
+library(tidyverse)
+library(primer.data)
+```
+
+Lifespan varies widely among individuals and can be influenced by many factors, including demographic characteristics. This study uses data from over 3,500 U.S. gubernatorial election candidates collected by the primer.data package to explore how long candidates live after their elections.
